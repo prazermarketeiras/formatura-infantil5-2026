@@ -87,6 +87,8 @@ body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-we
 .conv-list{display:flex;flex-direction:column;gap:5px;}
 .conv-row{display:flex;gap:7px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px 9px;}
 .conv-nome{flex:1 1 100px;font-size:12.5px;font-weight:600;}
+input.conv-nome{border:none;background:transparent;padding:2px 4px;font-family:'Inter',sans-serif;border-radius:5px;min-width:0;}
+input.conv-nome:focus{outline:1.5px solid var(--gold);background:#FFFDF5;}
 .tipo-badge{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:700;white-space:nowrap;}
 .t-adul{background:var(--blue-s);color:var(--blue);}
 .t-form{background:var(--gold-s);color:#7a5800;}
@@ -636,7 +638,7 @@ function fCard(f){
 
 function fBody(f){
   const tot=vFam(f);const vp=tot/f.parc;const h=new Date();h.setHours(0,0,0,0);
-  const convHtml=(f.cv||[]).length?(f.cv||[]).map((c,i)=>`<div class="conv-row"><span class="tipo-badge ${TC[c.t]||'t-grat'}">${TL[c.t]||c.t}</span><span class="conv-nome">${c.n}</span><button class="link-btn red" onclick="rmCv('${f.id}',${i})">✕</button></div>`).join(''):'<span style="font-size:12px;color:var(--muted)">Nenhum convidado.</span>';
+  const convHtml=(f.cv||[]).length?(f.cv||[]).map((c,i)=>`<div class="conv-row"><span class="tipo-badge ${TC[c.t]||'t-grat'}">${TL[c.t]||c.t}</span><input type="text" class="conv-nome" value="${c.n.replace(/"/g,'&quot;')}" onchange="setCvNome('${f.id}',${i},this.value)"><button class="link-btn red" onclick="rmCv('${f.id}',${i})">✕</button></div>`).join(''):'<span style="font-size:12px;color:var(--muted)">Nenhum convidado.</span>';
   let pHtml='';
   for(let i=0;i<f.parc;i++){
     const p=f.pags[i]||{pg:false,vp:null,dt:null,comp:''};const vd=dParc(i,cfg.pri);const isOv=!p.pg&&new Date(vd+'T00:00:00')<h;
@@ -645,6 +647,7 @@ function fBody(f){
   }
   const nPag=(f.cv||[]).filter(c=>c.t==='adulto'||c.t==='irmao_inteiro').length,nMeia=(f.cv||[]).filter(c=>c.t==='irmao_meia').length,nGrat=(f.cv||[]).filter(c=>c.t==='gratuito'||c.t==='irmao_gratis'||c.t==='outro').length;
   return`<div class="sec">Configurações da família</div>
+  <div class="field" style="margin-bottom:8px"><label>Nome do(a) formando(a)</label><input type="text" value="${f.n.replace(/"/g,'&quot;')}" onchange="setNome('${f.id}',this.value)" style="font-weight:600"></div>
   <div class="c-row" style="margin-bottom:4px">
     <div class="field"><label>Formandos</label><input type="number" min="1" value="${f.fo||1}" onchange="setFo('${f.id}',this.value)"></div>
     <div class="field"><label>Parcelas</label><select onchange="setParc('${f.id}',this.value)">${[1,2,3,4,5].map(n=>`<option value="${n}" ${f.parc==n?'selected':''}>${n}x</option>`).join('')}</select></div>
@@ -728,6 +731,8 @@ function reop(id){openFams.add(id);const b=document.getElementById('fb_'+id);if(
 function reopF(id){openForns.add(id);const b=document.getElementById('fob_'+id);if(b)b.classList.add('open');}
 
 // ── AÇÕES FAMÍLIAS ─────────────────────────────────────────────────────────
+window.setNome=async(id,v)=>{const f=FF(id);if(!v.trim())return;f.n=v.trim();await saveFams();renderFams();reop(id);}
+window.setCvNome=async(id,i,v)=>{const f=FF(id);if(!v.trim()||!f.cv[i])return;f.cv[i].n=v.trim();await saveFams();reop(id);}
 window.setFo=async(id,v)=>{const f=FF(id);f.fo=Math.max(1,parseInt(v)||1);await saveFams();reop(id);}
 window.setParc=async(id,v)=>{const f=FF(id);const n=parseInt(v);f.parc=n;f.pags=Array.from({length:n},(_,i)=>f.pags[i]||{pg:false,vp:null,dt:null,comp:''});await saveFams();reop(id);}
 window.setVOvr=async(id,v)=>{const f=FF(id);const cal=vFam({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-cal)<0.01?null:n;await saveFams();reop(id);}
