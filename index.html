@@ -734,12 +734,12 @@ function reopF(id){openForns.add(id);const b=document.getElementById('fob_'+id);
 window.setNome=async(id,v)=>{const f=FF(id);if(!v.trim())return;f.n=v.trim();await saveFams();renderFams();reop(id);}
 window.setCvNome=async(id,i,v)=>{const f=FF(id);if(!v.trim()||!f.cv[i])return;f.cv[i].n=v.trim();await saveFams();reop(id);}
 window.setFo=async(id,v)=>{const f=FF(id);f.fo=Math.max(1,parseInt(v)||1);await saveFams();reop(id);}
-window.setParc=async(id,v)=>{const f=FF(id);const n=parseInt(v);f.parc=n;f.pags=Array.from({length:n},(_,i)=>f.pags[i]||{pg:false,vp:null,dt:null,comp:''});await saveFams();reop(id);}
-window.setVOvr=async(id,v)=>{const f=FF(id);const cal=vFam({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-cal)<0.01?null:n;await saveFams();reop(id);}
-window.tgPago=async(id,i,ch)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].pg=ch;if(ch&&!f.pags[i].dt)f.pags[i].dt=now();await saveFams();reop(id);}
-window.setDt=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].dt=v;await saveFams();reop(id);}
-window.setVp=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].vp=v===''?null:parseFloat(v);await saveFams();reop(id);}
-window.setComp=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].comp=v;await saveFams();}
+window.setParc=async(id,v)=>{const f=FF(id);const n=parseInt(v);f.parc=n;f.pags=Array.from({length:n},(_,i)=>f.pags[i]||{pg:false,vp:null,dt:null,comp:''});await saveFams();renderFams();reop(id);}
+window.setVOvr=async(id,v)=>{const f=FF(id);const cal=vFam({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-cal)<0.01?null:n;await saveFams();renderFams();reop(id);}
+window.tgPago=async(id,i,ch)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].pg=ch;if(ch&&!f.pags[i].dt)f.pags[i].dt=now();await saveFams();renderFams();reop(id);}
+window.setDt=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].dt=v;await saveFams();renderFams();reop(id);}
+window.setVp=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].vp=v===''?null:parseFloat(v);await saveFams();renderFams();reop(id);}
+window.setComp=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].comp=v;await saveFams();renderFams();}
 window.setObs=async(id,v)=>{const f=FF(id);f.obs=v;await saveFams();}
 window.rmCv=async(id,i)=>{const f=FF(id);f.cv.splice(i,1);await saveFams();reop(id);}
 window.rmFam=async(id)=>{if(!confirm('Remover esta família?'))return;fams=fams.filter(f=>f.id!==id);openFams.delete(id);await saveFams();toast('Família removida');}
