@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão Formatura — Infantil 5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+:root{
+  --navy:#1B2A6B;--navy-d:#111E4D;--gold:#F4B731;--gold-s:#FCE6A8;
+  --cream:#FBF8F1;--card:#fff;--ink:#1C2340;--muted:#6B7290;--line:#E7E2D4;
+  --green:#2F9E63;--green-s:#E5F5EC;--blue:#3169C9;--blue-s:#E9F0FC;
+  --amber:#D98A1F;--amber-s:#FBF0DC;--red:#D6453F;--red-s:#FBE8E7;--r:13px;
+}
+*{box-sizing:border-box;}html,body{margin:0;padding:0;}
+body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:60px;}
+.hero{background:linear-gradient(160deg,var(--navy-d) 0%,var(--navy) 65%,#233a8a 100%);color:#fff;padding:22px 18px 0;border-bottom:4px solid var(--gold);position:relative;overflow:hidden;}
+.hero::before{content:"";position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(244,183,49,.2) 0%,transparent 70%);}
+.hero-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;position:relative;z-index:1;}
+.hero-brand{display:flex;align-items:center;gap:12px;}
+.hero h1{font-family:'Fredoka',sans-serif;font-size:20px;margin:0;}
+.hero .sub{font-size:12px;color:var(--gold-s);font-weight:500;margin:1px 0 0;}
+.hero-meta{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0;position:relative;z-index:1;}
+.meta-pill{background:rgba(255,255,255,.09);border:1px solid rgba(244,183,49,.35);padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:500;color:#F3EEDF;}
+.tabs{display:flex;gap:4px;margin-top:14px;position:relative;z-index:1;}
+.tab-btn{padding:10px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:none;cursor:pointer;border-radius:10px 10px 0 0;transition:all .2s;}
+.tab-btn.active{background:#fff;color:var(--navy-d);}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.wrap{max-width:980px;margin:0 auto;padding:0 14px;}
+.dash{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:-2px;}
+@media(max-width:700px){.dash{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--card);border-radius:var(--r);padding:13px 14px;box-shadow:0 4px 14px rgba(27,42,107,.09);border:1px solid var(--line);}
+.stat .lbl{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.stat .val{font-family:'Fredoka',sans-serif;font-size:20px;margin-top:3px;color:var(--navy);}
+.stat.red .val{color:var(--red);}.stat.grn .val{color:var(--green);}.stat.gld .val{color:#B6790F;}
+.prog-card{background:var(--card);border-radius:var(--r);padding:13px 15px;margin-top:10px;box-shadow:0 4px 12px rgba(27,42,107,.07);border:1px solid var(--line);}
+.prog-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;flex-wrap:wrap;gap:4px;}
+.prog-row strong{font-family:'Fredoka',sans-serif;color:var(--navy);font-size:14px;}
+.pb-bg{height:9px;background:#EEE9DA;border-radius:999px;overflow:hidden;}
+.pb-fill{height:100%;border-radius:999px;transition:width .4s ease;}
+.cfg-panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-top:10px;padding:13px 15px;display:none;}
+.cfg-panel.open{display:block;}
+.cfg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:9px;}
+@media(max-width:650px){.cfg-grid{grid-template-columns:1fr 1fr;}}
+.toolbar{margin-top:15px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.srch{flex:1 1 200px;padding:9px 12px;border-radius:11px;border:1px solid var(--line);background:var(--card);font-size:13.5px;font-family:'Inter',sans-serif;}
+.srch:focus{outline:2px solid var(--gold);}
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);white-space:nowrap;}
+.chip.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.btn{padding:8px 14px;border-radius:10px;border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-gold{background:var(--gold);color:var(--navy-d);}
+.btn-out{background:#fff;border:1px solid var(--line);color:var(--navy);}
+.btn-out:hover{background:#F3EFE2;}
+.btn-sm{padding:5px 10px;font-size:11.5px;border-radius:8px;}
+.btn-danger{background:#fff;border:1px solid var(--red);color:var(--red);}
+.link-btn{background:none;border:none;color:var(--blue);font-weight:600;font-size:12px;cursor:pointer;padding:0;}
+.link-btn.red{color:var(--red);}
+.act-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;}
+.field{display:flex;flex-direction:column;gap:3px;}
+.field label{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.field input,.field select,.field textarea{padding:7px 9px;border-radius:8px;border:1px solid var(--line);font-size:13px;font-family:'Inter',sans-serif;width:100%;}
+.field textarea{resize:vertical;min-height:44px;}
+.c-row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;}
+.c-row .field{flex:1 1 80px;}
+.list{margin-top:13px;display:flex;flex-direction:column;gap:8px;}
+.fcard{background:var(--card);border-radius:var(--r);border:1px solid var(--line);box-shadow:0 3px 12px rgba(27,42,107,.06);overflow:hidden;}
+.fhead{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;flex-wrap:wrap;}
+.avatar{width:36px;height:36px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-weight:600;font-size:14px;flex-shrink:0;}
+.fmain{flex:1 1 160px;}
+.fname{font-weight:700;font-size:14px;color:var(--navy-d);}
+.fcomp{font-size:11px;color:var(--muted);margin-top:2px;}
+.fnum{text-align:right;}
+.ftot{font-family:'Fredoka',sans-serif;font-size:14px;color:var(--navy);}
+.fpaid{font-size:11px;color:var(--muted);}
+.mbar{width:80px;height:5px;background:#EEE9DA;border-radius:999px;margin-top:4px;overflow:hidden;}
+.mbar-f{height:100%;background:var(--green);}
+.badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+.b-pago{background:var(--green-s);color:var(--green);}
+.b-parc{background:var(--blue-s);color:var(--blue);}
+.b-atr{background:var(--red-s);color:var(--red);}
+.b-pend{background:#F0EEE4;color:var(--muted);}
+.fbody{display:none;border-top:1px solid var(--line);padding:13px 14px 15px;background:#FCFAF4;}
+.fbody.open{display:block;}
+.sec{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:13px 0 7px;}
+.sec:first-child{margin-top:0;}
+.conv-list{display:flex;flex-direction:column;gap:5px;}
+.conv-row{display:flex;gap:7px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px 9px;}
+.conv-nome{flex:1 1 100px;font-size:12.5px;font-weight:600;}
+.tipo-badge{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:700;white-space:nowrap;}
+.t-adul{background:var(--blue-s);color:var(--blue);}
+.t-form{background:var(--gold-s);color:#7a5800;}
+.t-int{background:var(--amber-s);color:var(--amber);}
+.t-meia{background:#EFF6FB;color:#3185B0;}
+.t-grat{background:var(--green-s);color:var(--green);}
+.t-free{background:#F0EEE4;color:#5a6080;}
+.ptbl{width:100%;border-collapse:collapse;}
+.ptbl th{text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;padding:3px 5px;font-weight:700;letter-spacing:.3px;}
+.ptbl td{padding:4px 5px;font-size:12.5px;border-top:1px solid var(--line);vertical-align:middle;}
+.ptbl input[type=date],.ptbl input[type=number]{padding:4px 6px;border-radius:7px;border:1px solid var(--line);font-size:12px;width:100%;}
+.ptbl input[type=checkbox]{width:16px;height:16px;}
+.ov td{background:rgba(214,69,63,.04);}
+.comp-inp{width:100%;padding:4px 7px;border-radius:7px;border:1px solid var(--line);font-size:11px;font-family:'Inter',sans-serif;}
+.forn-list{margin-top:13px;display:flex;flex-direction:column;gap:8px;}
+.focard{background:var(--card);border-radius:var(--r);border:1px solid var(--line);box-shadow:0 3px 12px rgba(27,42,107,.06);overflow:hidden;}
+.fohead{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;flex-wrap:wrap;}
+.foicon{width:34px;height:34px;border-radius:10px;background:var(--navy-d);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.fomain{flex:1 1 160px;}
+.foname{font-weight:700;font-size:14px;color:var(--navy-d);}
+.fotype{font-size:11px;color:var(--muted);margin-top:2px;}
+.fonum{text-align:right;}
+.fotot{font-family:'Fredoka',sans-serif;font-size:14px;color:var(--navy);}
+.fobody{display:none;border-top:1px solid var(--line);padding:13px 14px 15px;background:#FCFAF4;}
+.fobody.open{display:block;}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px;}
+@media(max-width:600px){.pay-grid{grid-template-columns:1fr 1fr;}}
+.pblk{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;}
+.pblk.paid{border-color:var(--green);background:var(--green-s);}
+.pblk.paid .pb-lbl{color:var(--green);}
+.pb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:6px;}
+.pb-val{font-family:'Fredoka',sans-serif;font-size:18px;color:var(--navy);}
+.pb-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.chk-row{display:flex;align-items:center;gap:6px;margin-top:8px;}
+.chk-row input{width:16px;height:16px;}
+.chk-row label{font-size:12px;font-weight:600;}
+.modal-ov{position:fixed;inset:0;background:rgba(17,30,77,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:14px;}
+.modal-ov.open{display:flex;}
+.modal{background:#fff;border-radius:14px;padding:20px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;}
+.modal h3{font-family:'Fredoka',sans-serif;color:var(--navy);margin:0 0 13px;}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--navy-d);color:#fff;padding:9px 18px;border-radius:10px;font-size:12.5px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:200;font-weight:700;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+.sync-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 11px;font-size:11.5px;color:rgba(255,255,255,.85);}
+.sdot{width:7px;height:7px;border-radius:50%;background:#888;flex-shrink:0;transition:background .4s;}
+.sdot.ok{background:#2F9E63;}
+.sdot.err{background:var(--red);}
+.sdot.loading{background:var(--gold);animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-top">
+    <div class="hero-brand"><span style="font-size:30px">🎓</span><div><h1>Gestão Formatura</h1><p class="sub">Infantil 5 · Turma 2026</p></div></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:relative;z-index:1">
+      <div class="sync-pill">
+        <span class="sdot loading" id="sdot"></span>
+        <span id="syncLbl">Carregando…</span>
+      </div>
+      <button class="btn btn-sm" id="btnCfg" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:9px;font-weight:700;">⚙️ Config</button>
+    </div>
+  </div>
+  <div class="hero-meta">
+    <span class="meta-pill">📅 05/12/2026</span>
+    <span class="meta-pill">📍 Cellebrar</span>
+    <span class="meta-pill">🕒 15h–21h</span>
+    <span class="meta-pill" id="pillVenc">💳 Parcelas todo dia 10</span>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="alunos">🎓 Famílias (35)</button>
+    <button class="tab-btn" data-tab="forn">🏪 Fornecedores</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="cfg-panel" id="cfgPanel">
+    <strong style="font-family:'Fredoka',sans-serif;color:var(--navy)">Valores e configurações</strong>
+    <div class="cfg-grid">
+      <div class="field"><label>Formando (R$)</label><input type="number" step="0.01" id="cfgForm"></div>
+      <div class="field"><label>Adulto (R$)</label><input type="number" step="0.01" id="cfgAdul"></div>
+      <div class="field"><label>Criança até 6</label><input type="number" step="0.01" id="cfgC6"></div>
+      <div class="field"><label>Criança 7–9</label><input type="number" step="0.01" id="cfgC9"></div>
+      <div class="field"><label>Criança 10+</label><input type="number" step="0.01" id="cfgC10"></div>
+      <div class="field"><label>Parcelas padrão</label>
+        <select id="cfgParc"><option value="1">1x</option><option value="2">2x</option><option value="3">3x</option><option value="4">4x</option><option value="5">5x</option></select>
+      </div>
+      <div class="field"><label>1ª parcela vence</label><input type="date" id="cfgData"></div>
+      <div class="field"><label>Nº formandos</label><input type="number" id="cfgNF" min="1"></div>
+    </div>
+    <div class="act-row" style="margin-top:10px">
+      <button class="btn btn-gold btn-sm" id="btnSaveCfg">Salvar configurações</button>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content active" id="tab-alunos">
+<div class="wrap">
+  <div class="dash" style="margin-top:12px">
+    <div class="stat"><div class="lbl">Total esperado</div><div class="val" id="dEsp">—</div></div>
+    <div class="stat grn"><div class="lbl">Recebido</div><div class="val" id="dRec">—</div></div>
+    <div class="stat red"><div class="lbl">Em atraso</div><div class="val" id="dAtr">—</div></div>
+    <div class="stat gld"><div class="lbl">Famílias quites</div><div class="val" id="dQt">—</div></div>
+  </div>
+  <div class="prog-card">
+    <div class="prog-row"><strong>Arrecadação total</strong><span id="pPct" style="font-size:12.5px;color:var(--muted)">0%</span></div>
+    <div class="pb-bg"><div class="pb-fill" id="pFill" style="width:0%;background:linear-gradient(90deg,var(--gold),var(--green))"></div></div>
+  </div>
+  <div class="toolbar">
+    <input type="text" class="srch" id="srch" placeholder="🔎 Buscar formando...">
+  </div>
+  <div class="chips" style="margin-top:8px" id="chips">
+    <div class="chip active" data-f="todos">Todos</div>
+    <div class="chip" data-f="atrasado">Atrasados</div>
+    <div class="chip" data-f="parcial">Em dia</div>
+    <div class="chip" data-f="pago">Quites</div>
+    <div class="chip" data-f="pendente">Pendentes</div>
+  </div>
+  <div class="act-row">
+    <button class="btn btn-out btn-sm" id="btnAddFam">+ Família</button>
+    <button class="btn btn-out btn-sm" id="btnAtras">📋 Lista atrasados</button>
+    <button class="btn btn-out btn-sm" id="btnOrd">↕ A–Z</button>
+  </div>
+  <div class="list" id="famList"><div style="text-align:center;padding:30px;color:var(--muted)">Carregando...</div></div>
+</div>
+</div>
+
+<div class="tab-content" id="tab-forn">
+<div class="wrap">
+  <div class="dash" style="margin-top:12px">
+    <div class="stat"><div class="lbl">Total previsto</div><div class="val" id="fTot">—</div></div>
+    <div class="stat grn"><div class="lbl">Pago entrada</div><div class="val" id="fEnt">—</div></div>
+    <div class="stat grn"><div class="lbl">Pago saldo</div><div class="val" id="fSal">—</div></div>
+    <div class="stat red"><div class="lbl">Pendente</div><div class="val" id="fPend">—</div></div>
+  </div>
+  <div class="prog-card">
+    <div class="prog-row"><strong>Progresso fornecedores</strong><span id="fPct" style="font-size:12.5px;color:var(--muted)">0%</span></div>
+    <div class="pb-bg"><div class="pb-fill" id="fFill" style="width:0%;background:linear-gradient(90deg,var(--gold),var(--green))"></div></div>
+  </div>
+  <div class="act-row" style="margin-top:12px">
+    <button class="btn btn-out btn-sm" id="btnAddForn">+ Fornecedor</button>
+    <button class="btn btn-out btn-sm" id="btnCopForn">📋 Resumo fornecedores</button>
+  </div>
+  <div class="forn-list" id="fornList"><div style="text-align:center;padding:30px;color:var(--muted)">Carregando...</div></div>
+</div>
+</div>
+
+<!-- MODAIS -->
+<div class="modal-ov" id="mFam">
+  <div class="modal">
+    <h3>Adicionar família</h3>
+    <div class="field" style="margin-bottom:10px"><label>Nome do(a) formando(a)</label><input type="text" id="nNome"></div>
+    <div class="c-row" style="margin-bottom:10px">
+      <div class="field"><label>Formandos</label><input type="number" id="nForms" value="1" min="1"></div>
+      <div class="field"><label>Parcelas</label>
+        <select id="nParc"><option value="1">1x</option><option value="2">2x</option><option value="3">3x</option><option value="4">4x</option><option value="5" selected>5x</option></select>
+      </div>
+    </div>
+    <div class="act-row">
+      <button class="btn btn-gold btn-sm" id="btnOkFam">Adicionar</button>
+      <button class="btn btn-out btn-sm" id="btnNaoFam">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="mConv">
+  <div class="modal">
+    <h3 id="mConvTitle">Adicionar convidado</h3>
+    <div class="field" style="margin-bottom:10px"><label>Nome completo</label><input type="text" id="cNome"></div>
+    <div class="field" style="margin-bottom:12px"><label>Categoria</label>
+      <select id="cTipo">
+        <option value="adulto">Adulto pagante — R$125</option>
+        <option value="gratuito">Gratuito (isento de cobrança)</option>
+        <option value="irmao_inteiro">Irmão/ã 10+ anos — R$125</option>
+        <option value="irmao_meia">Irmão/ã 7–9 anos — meia R$62,50</option>
+        <option value="irmao_gratis">Irmão/ã até 6 anos — grátis</option>
+        <option value="outro">Outro acompanhante — grátis</option>
+      </select>
+    </div>
+    <div class="act-row">
+      <button class="btn btn-gold btn-sm" id="btnOkConv">Adicionar</button>
+      <button class="btn btn-out btn-sm" id="btnNaoConv">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="mForn">
+  <div class="modal">
+    <h3>Adicionar fornecedor</h3>
+    <div class="field" style="margin-bottom:10px"><label>Nome</label><input type="text" id="fnNome"></div>
+    <div class="c-row" style="margin-bottom:10px">
+      <div class="field"><label>Tipo</label>
+        <select id="fnTipo"><option value="fixo">Valor fixo</option><option value="por_aluno">Por formando</option></select>
+      </div>
+      <div class="field"><label>Valor (R$)</label><input type="number" step="0.01" id="fnVal"></div>
+    </div>
+    <div class="act-row">
+      <button class="btn btn-gold btn-sm" id="btnOkForn">Adicionar</button>
+      <button class="btn btn-out btn-sm" id="btnNaoForn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIGURAÇÃO GITHUB ────────────────────────────────────────────────────
+const GH_TOKEN  = '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';
+const GH_REPO   = 'prazermarketeiras/formatura-infantil5-2026';
+const GH_FILE   = 'dados.json';
+const GH_API    = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
+const GH_HEADS  = { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' };
+
+let currentSha  = null;
+let pollTimer   = null;
+let isSaving    = false;
+
+// ── ESTADO ─────────────────────────────────────────────────────────────────
+let cfg  = {vForm:451,vAdul:125,c6:0,c9:62.5,c10:125,parc:5,pri:'2026-07-10',nF:35};
+let fams = [], forns = [];
+let filtro='todos', busca='', az=true, cvFam=null;
+const openFams  = new Set();
+const openForns = new Set();
+
+// ── SEED ───────────────────────────────────────────────────────────────────
+const uid = () => '_' + Math.random().toString(36).slice(2,8);
+const SF = [
+  {n:'Alícia Martins Andrade',fo:1,cv:[{n:'Caroline',t:'gratuito'},{n:'Rafael',t:'gratuito'},{n:'Daniel',t:'adulto'},{n:'Yasmine',t:'adulto'},{n:'Cecília (2 anos)',t:'irmao_gratis'}],obs:'Caroline e Rafael isentos'},
+  {n:'Alycia Moreira Freitas',fo:1,cv:[{n:'Luciana',t:'adulto'},{n:'Edmar',t:'adulto'},{n:'Cláudia',t:'adulto'}],obs:''},
+  {n:'Ana Beatriz Dumont Dornelas',fo:1,cv:[{n:'Marina',t:'gratuito'},{n:'Lucas',t:'gratuito'},{n:'Ana Carla',t:'adulto'},{n:'Jaqueline',t:'adulto'},{n:'A confirmar (5º)',t:'adulto'}],obs:'Marina e Lucas isentos. 1 adulto em lista de espera confirmado'},
+  {n:'Ana Lívia Volpi Raposo',fo:1,cv:[{n:'Fernanda',t:'adulto'},{n:'Bruno',t:'adulto'},{n:'Thaissa',t:'adulto'},{n:'Fabiano',t:'adulto'}],obs:''},
+  {n:'Angelina e Enzo Portilho',fo:2,cv:[{n:'Angelina Portilho',t:'formando'},{n:'Enzo Portilho',t:'formando'},{n:'Cristiane',t:'gratuito'},{n:'Marcio',t:'gratuito'}],obs:'Irmãos gêmeos — 2 formandos. Cristiane e Marcio isentos'},
+  {n:'Benjamim de Lima Abreu Queiroga',fo:1,cv:[{n:'Suzana',t:'adulto'},{n:'Guilherme',t:'adulto'},{n:'Suzimere',t:'adulto'},{n:'Glaucia',t:'adulto'}],obs:''},
+  {n:'Bianca Cassemiro Guimarães',fo:1,cv:[{n:'Juliana',t:'adulto'},{n:'Fernando',t:'adulto'},{n:'Gustavo (10 anos)',t:'irmao_inteiro'}],obs:'Gustavo paga inteiro'},
+  {n:'Clara',fo:1,cv:[{n:'Diego',t:'adulto'},{n:'Graziele',t:'adulto'},{n:'Gilmara',t:'adulto'},{n:'Betânia',t:'adulto'},{n:'Alice (3 anos)',t:'irmao_gratis'}],obs:'Alice não paga'},
+  {n:'Davi Brandão de Souza Freitas',fo:1,cv:[{n:'Jionara',t:'adulto'},{n:'Jaciara',t:'adulto'},{n:'Jussimara',t:'adulto'},{n:'Aurenice',t:'adulto'},{n:'A confirmar (5º)',t:'adulto'}],obs:''},
+  {n:'Davi Jarlan Espíndola Pereira',fo:1,cv:[{n:'Bruno',t:'adulto'},{n:'Rafaella',t:'adulto'},{n:'Maria',t:'adulto'},{n:'Sandra',t:'adulto'},{n:'A confirmar (5º)',t:'adulto'},{n:'Arthur Jarlan (8 anos)',t:'irmao_meia'}],obs:'Arthur meia entrada'},
+  {n:'Davi Lucca Santos Carvalho',fo:1,cv:[{n:'Janaina',t:'adulto'},{n:'Lucas',t:'adulto'}],obs:'Cedeu 1 cota para Júlia Tirone Rocha'},
+  {n:'Dora Oliveira Guimarães Souza',fo:1,cv:[{n:'Lygia',t:'adulto'},{n:'Julisson',t:'adulto'},{n:'Luiz Carlos',t:'adulto'},{n:'Artur (14 anos)',t:'irmao_inteiro'}],obs:'Artur 14 anos paga inteiro'},
+  {n:'Emanuel Moreira Félix',fo:1,cv:[{n:'Francelina',t:'adulto'},{n:'Geraldo Jr',t:'adulto'}],obs:''},
+  {n:'Felipe Godoy de Melo Figueiredo',fo:1,cv:[{n:'Lívia',t:'adulto'},{n:'Henrique',t:'adulto'},{n:'Pedro (7 anos)',t:'irmao_meia'},{n:'João (4 anos)',t:'irmao_gratis'}],obs:'Pedro meia; João não paga'},
+  {n:'Gabriela Teixeira Marques',fo:1,cv:[{n:'Flávia',t:'adulto'},{n:'Rodrigo',t:'adulto'},{n:'Leonardo (8 anos)',t:'irmao_meia'}],obs:''},
+  {n:'Heitor Dutra Melo',fo:1,cv:[{n:'Bianca',t:'adulto'},{n:'Irineu',t:'adulto'},{n:'Antônio',t:'adulto'},{n:'Solange',t:'adulto'},{n:'Ester (13 anos)',t:'irmao_inteiro'}],obs:'Ester 13 anos paga inteiro'},
+  {n:'Júlia Moreira Pontes Cambraia',fo:1,cv:[{n:'Guilherme',t:'adulto'},{n:'Pollyana',t:'adulto'},{n:'Sophia (12 anos)',t:'irmao_inteiro'}],obs:'Sophia 12 anos paga inteiro'},
+  {n:'Júlia Tirone Rocha',fo:1,cv:[{n:'Joubert',t:'adulto'},{n:'Aline',t:'adulto'},{n:'Vilma',t:'adulto'},{n:'Mirtis',t:'adulto'},{n:'A confirmar (cota Davi Lucca)',t:'adulto'},{n:'Bernardo (8 anos)',t:'irmao_meia'},{n:'Arthur (14 anos)',t:'irmao_inteiro'}],obs:'5º via cota cedida por Davi Lucca'},
+  {n:'Letícia Corrêa Vasconcelos',fo:1,cv:[{n:'Bianca',t:'adulto'},{n:'Aulus',t:'adulto'}],obs:''},
+  {n:'Lucas Campos Filizzola Paiva',fo:1,cv:[{n:'Juliana',t:'adulto'},{n:'Daniel',t:'adulto'},{n:'Márcia',t:'adulto'},{n:'Mário',t:'adulto'},{n:'A confirmar (5º)',t:'adulto'},{n:'A confirmar (6º)',t:'adulto'}],obs:'2 adultos extras confirmados pela lista'},
+  {n:'Luís Otávio Campos Nogueira',fo:1,cv:[{n:'Thayane',t:'adulto'},{n:'Edmilson',t:'adulto'},{n:'Marco',t:'adulto'},{n:'Cleia',t:'adulto'},{n:'Marco Antônio (8 anos)',t:'irmao_meia'}],obs:''},
+  {n:'Luna Moreira Kutas',fo:1,cv:[{n:'Josiane',t:'adulto'},{n:'Manfred',t:'adulto'},{n:'Bento (4 anos)',t:'irmao_gratis'}],obs:'Bento não paga'},
+  {n:'Magno Abreu Machado Filho',fo:1,cv:[{n:'Mayra',t:'adulto'},{n:'Magno',t:'adulto'}],obs:''},
+  {n:'Manuela Silva Corrêa',fo:1,cv:[{n:'Fabiano',t:'adulto'},{n:'Cintia',t:'adulto'},{n:'Maria (13 anos)',t:'irmao_inteiro'},{n:'João Pedro (12 anos)',t:'irmao_inteiro'}],obs:'Maria e João Pedro pagam inteiro'},
+  {n:'Mateus Fraga dos Santos',fo:1,cv:[{n:'Priscila',t:'adulto'},{n:'Helvécio',t:'adulto'},{n:'Lena',t:'adulto'},{n:'Maria',t:'adulto'},{n:'Helena (8 anos)',t:'irmao_meia'}],obs:''},
+  {n:'Miguel Ribas Oliveira',fo:1,cv:[{n:'Ramon',t:'adulto'},{n:'Flávia',t:'adulto'},{n:'Iolenita',t:'adulto'},{n:'Elvira',t:'adulto'}],obs:''},
+  {n:'Nicolas Lúcio Martins Rodrigues',fo:1,cv:[{n:'Karina',t:'adulto'},{n:'Cláudio Jr',t:'adulto'},{n:'Maria José',t:'adulto'},{n:'Cláudio',t:'adulto'},{n:'Nadir',t:'adulto'},{n:'Renato (11 anos)',t:'irmao_inteiro'}],obs:'Renato 11 anos paga inteiro. Cota extra usada'},
+  {n:'Noah Basaia Martins',fo:1,cv:[{n:'Marcella',t:'adulto'},{n:'Filipe',t:'adulto'},{n:'Cássia',t:'adulto'},{n:'Fernando',t:'adulto'},{n:'A confirmar (5º)',t:'adulto'},{n:'A confirmar (6º)',t:'adulto'},{n:'Cleo (1 ano)',t:'irmao_gratis'}],obs:'Cleo não paga'},
+  {n:'Pedro Ferreira França Matos',fo:1,cv:[{n:'Fernanda',t:'adulto'},{n:'Rafael',t:'adulto'},{n:'Gabriel (3 anos)',t:'irmao_gratis'}],obs:''},
+  {n:'Renato Francisco Galeppe',fo:1,cv:[{n:'Renata',t:'adulto'},{n:'Francisco',t:'adulto'},{n:'Ivanete',t:'adulto'},{n:'Cristiano',t:'adulto'},{n:'A confirmar (Cristiano ou avó)',t:'adulto'}],obs:'Confirmar 5º adulto'},
+  {n:'Samuel Figueiredo Faria',fo:1,cv:[{n:'Patrícia',t:'adulto'},{n:'Helton',t:'adulto'},{n:'Cristina',t:'adulto'},{n:'Maria José',t:'adulto'},{n:'A confirmar (5º)',t:'adulto'}],obs:''},
+  {n:'Theo Martins Silva Guimarães',fo:1,cv:[{n:'Halanne',t:'adulto'},{n:'Rafael',t:'adulto'},{n:'Dilma',t:'adulto'},{n:'Luiza',t:'adulto'},{n:'Bento (1 ano)',t:'irmao_gratis'},{n:'Lucca (1 ano)',t:'irmao_gratis'}],obs:'Bento e Lucca não pagam'},
+  {n:'Theo Rezende',fo:1,cv:[{n:'Milena Rezende',t:'gratuito'},{n:'Bianca Rezende',t:'gratuito'},{n:'Álvaro Salles',t:'adulto'},{n:'Alessandra Rezende',t:'adulto'},{n:'Giovani Figueiredo',t:'adulto'},{n:'Kelly Tameirão',t:'adulto'},{n:'Carlos Roberto',t:'adulto'},{n:'Mauro Salles',t:'adulto'}],obs:'Milena e Bianca isentas. Giovani e Kelly via cota da Fran. Carlos e Mauro: regularização pendente'},
+  {n:'Vítor Nunes Amorim',fo:1,cv:[{n:'Kelly',t:'adulto'},{n:'Fábio',t:'adulto'},{n:'Pedro (8 anos)',t:'irmao_meia'}],obs:''},
+];
+const SFORN = [
+  {n:'Cellebrar',e:'🏛️',t:'fixo',v:4000},{n:'Picolé',e:'🍦',t:'fixo',v:600},
+  {n:'Guloseima',e:'🍬',t:'fixo',v:500},{n:'Buffet',e:'🍽️',t:'fixo',v:10312},
+  {n:'Chopp',e:'🍺',t:'fixo',v:1600},{n:'Decoração Raiane',e:'🎀',t:'fixo',v:1500},
+  {n:'Mesa e Cadeira',e:'🪑',t:'fixo',v:314},{n:'Doce',e:'🎂',t:'fixo',v:975},
+  {n:'Fotógrafo',e:'📷',t:'por_aluno',v:120},{n:'Lembrança',e:'🎁',t:'por_aluno',v:60},
+  {n:'Extra (por formando)',e:'✨',t:'por_aluno',v:50},{n:'Blusa',e:'👕',t:'por_aluno',v:60},
+];
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+const R   = (v) => (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const now = () => new Date().toISOString().slice(0,10);
+const BR  = (s) => { if(!s)return'—'; const[y,m,d]=s.split('-'); return`${d}/${m}/${y}`; };
+function dParc(i,p){const b=new Date(p+'T00:00:00');return new Date(b.getFullYear(),b.getMonth()+i,10).toISOString().slice(0,10);}
+function toB64(str){return btoa(unescape(encodeURIComponent(str)));}
+function fromB64(str){return decodeURIComponent(escape(atob(str.replace(/\s/g,''))));}
+function ensureArray(v){if(!v)return[];if(Array.isArray(v))return v.filter(Boolean);return Object.values(v).filter(Boolean);}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
+function setSyncStatus(state,label){
+  const dot=document.getElementById('sdot'),lbl=document.getElementById('syncLbl');
+  dot.className='sdot';
+  if(state==='ok'){dot.classList.add('ok');lbl.textContent=label||'Conectado';}
+  else if(state==='err'){dot.classList.add('err');lbl.textContent=label||'Erro';}
+  else{dot.classList.add('loading');lbl.textContent=label||'Salvando…';}
+}
+
+// ── GITHUB API ─────────────────────────────────────────────────────────────
+async function ghFetch(){
+  const r = await fetch(GH_API,{headers:GH_HEADS});
+  if(!r.ok) throw new Error('read');
+  const d = await r.json();
+  currentSha = d.sha;
+  return JSON.parse(fromB64(d.content));
+}
+
+async function ghSave(data){
+  // Busca SHA atual antes de salvar para evitar conflito
+  const check = await fetch(GH_API,{headers:GH_HEADS});
+  if(check.ok){const d=await check.json();currentSha=d.sha;}
+  const r = await fetch(GH_API,{
+    method:'PUT', headers:{...GH_HEADS,'Content-Type':'application/json'},
+    body:JSON.stringify({message:'update',content:toB64(JSON.stringify(data)),sha:currentSha})
+  });
+  if(!r.ok){const e=await r.json();throw new Error(e.message);}
+  const d = await r.json();
+  currentSha = d.content.sha;
+}
+
+// ── POLLING (atualiza a cada 20 seg) ──────────────────────────────────────
+function startPolling(){
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async()=>{
+    if(isSaving) return;
+    try{
+      const r = await fetch(GH_API,{headers:GH_HEADS});
+      if(!r.ok) return;
+      const d = await r.json();
+      if(d.sha !== currentSha){
+        currentSha = d.sha;
+        const data = JSON.parse(fromB64(d.content));
+        if(data.cfg) cfg={...cfg,...data.cfg};
+        if(data.fams) fams=ensureArray(data.fams);
+        if(data.forns) forns=ensureArray(data.forns);
+        renderCfg(); renderFams(); renderForns();
+        setSyncStatus('ok','Atualizado ✓');
+        setTimeout(()=>setSyncStatus('ok','Conectado'),2500);
+      }
+    }catch(e){setSyncStatus('err','Sem conexão');}
+  }, 20000);
+}
+
+// ── STORAGE ────────────────────────────────────────────────────────────────
+async function saveAll(){
+  isSaving=true;
+  setSyncStatus('loading','Salvando…');
+  try{
+    await ghSave({cfg,fams,forns});
+    setSyncStatus('ok','Salvo ✓');
+    setTimeout(()=>setSyncStatus('ok','Conectado'),1800);
+  }catch(e){
+    toast('Erro ao salvar — tente novamente');
+    setSyncStatus('err','Erro ao salvar');
+  }finally{isSaving=false;}
+}
+const saveFams  = saveAll;
+const saveForns = saveAll;
+const saveCfg   = saveAll;
+
+// ── LOAD ───────────────────────────────────────────────────────────────────
+async function load(){
+  setSyncStatus('loading','Carregando…');
+  try{
+    const data = await ghFetch();
+    if(!data.fams){
+      // Primeira vez: semeia dados
+      fams  = SF.map(s=>({id:uid(),n:s.n,fo:s.fo||1,cv:s.cv||[],parc:cfg.parc,vOvr:null,
+        pags:Array.from({length:cfg.parc},()=>({pg:false,vp:null,dt:null,comp:''})),obs:s.obs||''}));
+      forns = SFORN.map(s=>({id:uid(),n:s.n,e:s.e||'📦',t:s.t,v:s.v,vOvr:null,
+        eVal:null,eDt:null,ePg:false,sDt:null,sPg:false,obs:''}));
+      await ghSave({cfg,fams,forns});
+    } else {
+      if(data.cfg)  cfg   = {...cfg,...data.cfg};
+      fams  = ensureArray(data.fams);
+      forns = ensureArray(data.forns);
+    }
+    setSyncStatus('ok','Conectado');
+    renderCfg(); renderFams(); renderForns();
+    startPolling();
+  }catch(e){
+    setSyncStatus('err','Sem conexão');
+    toast('Não foi possível conectar. Verifique sua internet.');
+  }
+}
+
+// ── LÓGICA DE VALORES ──────────────────────────────────────────────────────
+function vConv(t){if(t==='adulto'||t==='irmao_inteiro')return cfg.vAdul;if(t==='irmao_meia')return cfg.c9;return 0;}
+function vFam(f){if(f.vOvr!=null)return f.vOvr;let tot=(f.fo||1)*cfg.vForm;(f.cv||[]).forEach(c=>{if(c.t!=='formando')tot+=vConv(c.t);});return tot;}
+function stFam(f){
+  const tot=vFam(f);const vp=tot/f.parc;let pg=0,ov=false;const h=new Date();h.setHours(0,0,0,0);
+  for(let i=0;i<f.parc;i++){const p=f.pags[i]||{pg:false};if(p.pg)pg+=(p.vp!=null?Number(p.vp):vp);else{const d=new Date(dParc(i,cfg.pri)+'T00:00:00');if(d<h)ov=true;}}
+  let s='pendente';if(pg>=tot-0.5)s='pago';else if(pg>0)s=ov?'atrasado':'parcial';else s=ov?'atrasado':'pendente';
+  return{tot,pg,sd:tot-pg,s,ov};
+}
+function vForn(f){if(f.vOvr!=null)return f.vOvr;return f.t==='por_aluno'?f.v*(cfg.nF||35):f.v;}
+
+// ── RENDER CONFIG ──────────────────────────────────────────────────────────
+function renderCfg(){
+  document.getElementById('cfgForm').value=cfg.vForm;document.getElementById('cfgAdul').value=cfg.vAdul;
+  document.getElementById('cfgC6').value=cfg.c6;document.getElementById('cfgC9').value=cfg.c9;
+  document.getElementById('cfgC10').value=cfg.c10;document.getElementById('cfgParc').value=cfg.parc;
+  document.getElementById('cfgData').value=cfg.pri;document.getElementById('cfgNF').value=cfg.nF||35;
+  document.getElementById('pillVenc').textContent=`💳 1ª parcela ${BR(cfg.pri)}`;
+}
+
+// ── RENDER FAMÍLIAS ────────────────────────────────────────────────────────
+const BM={pago:{c:'b-pago',l:'✓ Quite'},parcial:{c:'b-parc',l:'Em dia'},atrasado:{c:'b-atr',l:'⚠ Atrasado'},pendente:{c:'b-pend',l:'Pendente'}};
+const TL={adulto:'Adulto',gratuito:'Gratuito',irmao_inteiro:'Irmão 10+',irmao_meia:'Irmão 7-9 (meia)',irmao_gratis:'Até 6 (grátis)',outro:'Outro',formando:'Formando(a)'};
+const TC={adulto:'t-adul',gratuito:'t-free',irmao_inteiro:'t-int',irmao_meia:'t-meia',irmao_gratis:'t-grat',outro:'t-grat',formando:'t-form'};
+const AC=['#1B2A6B','#2F9E63','#3169C9','#7B3FC4','#D98A1F','#C53030'];
+function ac(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%AC.length;return AC[h];}
+
+function renderFams(){
+  let tot=0,rec=0,atr=0,qt=0;
+  fams.forEach(f=>{const s=stFam(f);tot+=s.tot;rec+=s.pg;if(s.ov&&s.s!=='pago')atr+=s.sd;if(s.s==='pago')qt++;});
+  document.getElementById('dEsp').textContent=R(tot);document.getElementById('dRec').textContent=R(rec);
+  document.getElementById('dAtr').textContent=R(atr);document.getElementById('dQt').textContent=`${qt}/${fams.length}`;
+  const pct=tot>0?Math.round(rec/tot*100):0;
+  document.getElementById('pPct').textContent=pct+'%';document.getElementById('pFill').style.width=pct+'%';
+  let lista=fams.filter(f=>{
+    if(busca&&!f.n.toLowerCase().includes(busca.toLowerCase()))return false;
+    if(filtro==='todos')return true;return stFam(f).s===filtro;
+  }).sort((a,b)=>az?a.n.localeCompare(b.n,'pt-BR'):b.n.localeCompare(a.n,'pt-BR'));
+  const c=document.getElementById('famList');
+  if(!lista.length){c.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted)">Nenhuma família encontrada.</div>';return;}
+  c.innerHTML=lista.map(fCard).join('');
+  lista.forEach(f=>{
+    const head=document.getElementById('fh_'+f.id),body=document.getElementById('fb_'+f.id);
+    if(openFams.has(f.id))body.classList.add('open');
+    head.addEventListener('click',()=>{body.classList.toggle('open');if(body.classList.contains('open'))openFams.add(f.id);else openFams.delete(f.id);});
+  });
+}
+
+function fCard(f){
+  const s=stFam(f);const b=BM[s.s];const pct=s.tot>0?Math.min(100,Math.round(s.pg/s.tot*100)):0;
+  const ini=f.n.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  const nA=(f.cv||[]).filter(c=>c.t==='adulto').length,nG=(f.cv||[]).filter(c=>c.t==='gratuito').length,nI=(f.cv||[]).filter(c=>c.t.startsWith('irmao')).length;
+  const cStr=`${nA} adulto${nA!==1?'s':''}${nG?` · ${nG} gratuito${nG!==1?'s':''}`:''} ${nI?`· ${nI} irmão${nI!==1?'s':''}`:''} · ${f.parc}x${f.fo>1?` · ${f.fo} formandos`:''}`;
+  return`<div class="fcard"><div class="fhead" id="fh_${f.id}"><div class="avatar" style="background:${ac(f.n)}">${ini}</div><div class="fmain"><div class="fname">${f.n}</div><div class="fcomp">${cStr}</div></div><span class="badge ${b.c}">${b.l}</span><div class="fnum"><div class="ftot">${R(s.tot)}</div><div class="fpaid">pago ${R(s.pg)}</div><div class="mbar"><div class="mbar-f" style="width:${pct}%"></div></div></div></div><div class="fbody" id="fb_${f.id}">${fBody(f)}</div></div>`;
+}
+
+function fBody(f){
+  const tot=vFam(f);const vp=tot/f.parc;const h=new Date();h.setHours(0,0,0,0);
+  const convHtml=(f.cv||[]).length?(f.cv||[]).map((c,i)=>`<div class="conv-row"><span class="tipo-badge ${TC[c.t]||'t-grat'}">${TL[c.t]||c.t}</span><span class="conv-nome">${c.n}</span><button class="link-btn red" onclick="rmCv('${f.id}',${i})">✕</button></div>`).join(''):'<span style="font-size:12px;color:var(--muted)">Nenhum convidado.</span>';
+  let pHtml='';
+  for(let i=0;i<f.parc;i++){
+    const p=f.pags[i]||{pg:false,vp:null,dt:null,comp:''};const vd=dParc(i,cfg.pri);const isOv=!p.pg&&new Date(vd+'T00:00:00')<h;
+    const compLink=p.comp&&p.comp.startsWith('http')?`<a href="${p.comp}" target="_blank" style="font-size:11px;color:var(--blue);white-space:nowrap;margin-left:4px">🔗 Ver</a>`:'';
+    pHtml+=`<tr class="${isOv?'ov':''}"><td>${i+1}ª</td><td style="white-space:nowrap">${BR(vd)}${isOv?' ⚠️':''}</td><td><input type="checkbox" ${p.pg?'checked':''} onchange="tgPago('${f.id}',${i},this.checked)"></td><td><input type="date" value="${p.dt||''}" onchange="setDt('${f.id}',${i},this.value)"></td><td><input type="number" step="0.01" placeholder="${vp.toFixed(2)}" value="${p.vp!=null?p.vp:''}" onchange="setVp('${f.id}',${i},this.value)"></td><td><div style="display:flex;gap:4px;align-items:center"><input class="comp-inp" type="text" placeholder="Cole link do Google Drive..." value="${p.comp||''}" onchange="setComp('${f.id}',${i},this.value)">${compLink}</div></td></tr>`;
+  }
+  const nPag=(f.cv||[]).filter(c=>c.t==='adulto'||c.t==='irmao_inteiro').length,nMeia=(f.cv||[]).filter(c=>c.t==='irmao_meia').length,nGrat=(f.cv||[]).filter(c=>c.t==='gratuito'||c.t==='irmao_gratis'||c.t==='outro').length;
+  return`<div class="sec">Configurações da família</div>
+  <div class="c-row" style="margin-bottom:4px">
+    <div class="field"><label>Formandos</label><input type="number" min="1" value="${f.fo||1}" onchange="setFo('${f.id}',this.value)"></div>
+    <div class="field"><label>Parcelas</label><select onchange="setParc('${f.id}',this.value)">${[1,2,3,4,5].map(n=>`<option value="${n}" ${f.parc==n?'selected':''}>${n}x</option>`).join('')}</select></div>
+    <div class="field"><label>Valor total (R$)</label><input type="number" step="0.01" value="${tot.toFixed(2)}" onchange="setVOvr('${f.id}',this.value)"></div>
+  </div>
+  <div style="background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:11.5px;color:var(--muted);line-height:1.8">
+    <strong style="color:var(--navy-d)">Composição:</strong> ${(f.fo||1)}× formando${(f.fo||1)>1?'s':''} (${R((f.fo||1)*cfg.vForm)}) ${nPag?`· ${nPag}× adulto${nPag>1?'s':''} pagante${nPag>1?'s':''}`:''} ${nMeia?`· ${nMeia}× meia`:''} ${nGrat?`· ${nGrat}× gratuito${nGrat>1?'s':''}`:''} = <strong style="color:var(--navy)">${R(tot)}</strong> ${f.parc>1?`→ ${f.parc}× de ${R(tot/f.parc)}`:''}
+  </div>
+  <div class="sec">Convidados e familiares</div>
+  <div class="conv-list" id="cv_${f.id}">${convHtml}</div>
+  <div style="margin-top:7px"><button class="btn btn-out btn-sm" onclick="openConv('${f.id}')">+ Adicionar convidado</button></div>
+  <div class="sec">Parcelas de pagamento</div>
+  <div style="overflow-x:auto"><table class="ptbl"><thead><tr><th>#</th><th>Vence</th><th>Pago</th><th>Data pgto</th><th>Valor (R$)</th><th>Comprovante / link</th></tr></thead><tbody>${pHtml}</tbody></table></div>
+  <div class="sec">Observações</div>
+  <div class="field"><textarea onchange="setObs('${f.id}',this.value)">${f.obs||''}</textarea></div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)">
+    <button class="btn btn-out btn-sm" onclick="copCob('${f.id}')">📋 Mensagem de cobrança</button>
+    <button class="btn btn-danger btn-sm" onclick="rmFam('${f.id}')">Remover família</button>
+  </div>`;
+}
+
+// ── RENDER FORNECEDORES ────────────────────────────────────────────────────
+function renderForns(){
+  let tot=0,pE=0,pS=0;
+  forns.forEach(f=>{const v=vForn(f);tot+=v;if(f.ePg&&f.eVal!=null)pE+=Number(f.eVal);const sal=f.eVal!=null?v-Number(f.eVal):v;if(f.sPg)pS+=sal;});
+  const pago=pE+pS;
+  document.getElementById('fTot').textContent=R(tot);document.getElementById('fEnt').textContent=R(pE);
+  document.getElementById('fSal').textContent=R(pS);document.getElementById('fPend').textContent=R(tot-pago);
+  const pct=tot>0?Math.round(pago/tot*100):0;document.getElementById('fPct').textContent=pct+'%';document.getElementById('fFill').style.width=pct+'%';
+  const c=document.getElementById('fornList');
+  if(!forns.length){c.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted)">Nenhum fornecedor.</div>';return;}
+  c.innerHTML=forns.map(foCard).join('');
+  forns.forEach(f=>{
+    const head=document.getElementById('foh_'+f.id),body=document.getElementById('fob_'+f.id);
+    if(openForns.has(f.id))body.classList.add('open');
+    head.addEventListener('click',()=>{body.classList.toggle('open');if(body.classList.contains('open'))openForns.add(f.id);else openForns.delete(f.id);});
+  });
+}
+
+function foCard(f){
+  const v=vForn(f);const eV=f.eVal!=null?Number(f.eVal):null;const sV=eV!=null?v-eV:v;
+  const pago=(f.ePg?eV||0:0)+(f.sPg?sV:0);const pct=v>0?Math.min(100,Math.round(pago/v*100)):0;
+  const tDesc=f.t==='por_aluno'?`${R(f.v)}/formando × ${cfg.nF||35} = ${R(v)}`:'Valor fixo';
+  let sl='Pendente',sc='b-pend';if(f.ePg&&f.sPg){sl='✓ Quitado';sc='b-pago';}else if(f.ePg){sl='Entrada paga';sc='b-parc';}else if(f.sPg){sl='Saldo pago';sc='b-parc';}
+  return`<div class="focard"><div class="fohead" id="foh_${f.id}"><div class="foicon">${f.e||'📦'}</div><div class="fomain"><div class="foname">${f.n}</div><div class="fotype">${tDesc}</div></div><span class="badge ${sc}">${sl}</span><div class="fonum"><div class="fotot">${R(v)}</div><div class="mbar" style="margin-top:5px"><div class="mbar-f" style="width:${pct}%"></div></div></div></div><div class="fobody" id="fob_${f.id}">${foBody(f,v,eV,sV)}</div></div>`;
+}
+
+function foBody(f,v,eV,sV){
+  return`<div class="c-row" style="margin-bottom:12px">
+    <div class="field"><label>Valor total (R$)</label><input type="number" step="0.01" value="${f.vOvr!=null?f.vOvr:v.toFixed(2)}" onchange="setFVOvr('${f.id}',this.value)"></div>
+    ${f.t==='por_aluno'?`<div class="field"><label>Valor por formando (R$)</label><input type="number" step="0.01" value="${f.v}" onchange="setFBase('${f.id}',this.value)"></div>`:''}
+    <div class="field"><label>Emoji</label><input type="text" value="${f.e||'📦'}" maxlength="2" onchange="setFEmoji('${f.id}',this.value)" style="max-width:60px;text-align:center;font-size:18px"></div>
+  </div>
+  <div class="pay-grid">
+    <div class="pblk ${f.ePg?'paid':''}">
+      <div class="pb-lbl">💳 Entrada</div><div class="pb-val">${eV!=null?R(eV):'—'}</div><div class="pb-sub">Valor pago na entrada</div>
+      <div class="field" style="margin:8px 0 6px"><label>Valor entrada (R$)</label><input type="number" step="0.01" placeholder="0.00" value="${f.eVal!=null?f.eVal:''}" onchange="setEVal('${f.id}',this.value)"></div>
+      <div class="field" style="margin-bottom:8px"><label>Data de pagamento</label><input type="date" value="${f.eDt||''}" onchange="setEDt('${f.id}',this.value)"></div>
+      <div class="chk-row"><input type="checkbox" id="ec_${f.id}" ${f.ePg?'checked':''} onchange="setEPg('${f.id}',this.checked)"><label for="ec_${f.id}">Entrada paga</label></div>
+    </div>
+    <div class="pblk ${f.sPg?'paid':''}">
+      <div class="pb-lbl">🏁 Saldo final</div><div class="pb-val">${R(sV!=null?sV:v)}</div><div class="pb-sub">Total − entrada</div>
+      <div class="field" style="margin:8px 0 6px"><label>Data pagamento do saldo</label><input type="date" value="${f.sDt||''}" onchange="setSDt('${f.id}',this.value)"></div>
+      <div class="chk-row"><input type="checkbox" id="sc_${f.id}" ${f.sPg?'checked':''} onchange="setSPg('${f.id}',this.checked)"><label for="sc_${f.id}">Saldo pago</label></div>
+    </div>
+    <div class="pblk">
+      <div class="pb-lbl">📊 Resumo</div>
+      <div style="font-size:12px;line-height:2"><div>Total: <strong>${R(v)}</strong></div><div>Entrada: <strong style="color:${f.ePg?'var(--green)':'var(--red)'}">${R(eV||0)}</strong>${f.ePg?' ✓':''}</div><div>Saldo: <strong style="color:${f.sPg?'var(--green)':'var(--amber)'}">${R(sV!=null?sV:v)}</strong>${f.sPg?' ✓':''}</div></div>
+    </div>
+  </div>
+  <div class="sec" style="margin-top:12px">Observações</div>
+  <div class="field"><textarea onchange="setFObs('${f.id}',this.value)">${f.obs||''}</textarea></div>
+  <div style="margin-top:10px"><button class="btn btn-danger btn-sm" onclick="rmForn('${f.id}')">Remover fornecedor</button></div>`;
+}
+
+// ── REFERÊNCIAS ────────────────────────────────────────────────────────────
+const FF=id=>fams.find(f=>f.id===id);
+const FN=id=>forns.find(f=>f.id===id);
+function reop(id){openFams.add(id);const b=document.getElementById('fb_'+id);if(b)b.classList.add('open');}
+function reopF(id){openForns.add(id);const b=document.getElementById('fob_'+id);if(b)b.classList.add('open');}
+
+// ── AÇÕES FAMÍLIAS ─────────────────────────────────────────────────────────
+window.setFo=async(id,v)=>{const f=FF(id);f.fo=Math.max(1,parseInt(v)||1);await saveFams();reop(id);}
+window.setParc=async(id,v)=>{const f=FF(id);const n=parseInt(v);f.parc=n;f.pags=Array.from({length:n},(_,i)=>f.pags[i]||{pg:false,vp:null,dt:null,comp:''});await saveFams();reop(id);}
+window.setVOvr=async(id,v)=>{const f=FF(id);const cal=vFam({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-cal)<0.01?null:n;await saveFams();reop(id);}
+window.tgPago=async(id,i,ch)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].pg=ch;if(ch&&!f.pags[i].dt)f.pags[i].dt=now();await saveFams();reop(id);}
+window.setDt=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].dt=v;await saveFams();reop(id);}
+window.setVp=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].vp=v===''?null:parseFloat(v);await saveFams();reop(id);}
+window.setComp=async(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].comp=v;await saveFams();}
+window.setObs=async(id,v)=>{const f=FF(id);f.obs=v;await saveFams();}
+window.rmCv=async(id,i)=>{const f=FF(id);f.cv.splice(i,1);await saveFams();reop(id);}
+window.rmFam=async(id)=>{if(!confirm('Remover esta família?'))return;fams=fams.filter(f=>f.id!==id);openFams.delete(id);await saveFams();toast('Família removida');}
+window.copCob=async(id)=>{
+  const f=FF(id);const tot=vFam(f);const vp=tot/f.parc;const h=new Date();h.setHours(0,0,0,0);const ls=[];
+  for(let i=0;i<f.parc;i++){const p=f.pags[i]||{pg:false};if(p.pg)continue;const d=new Date(dParc(i,cfg.pri)+'T00:00:00');ls.push(`${i+1}ª parcela — vence ${BR(dParc(i,cfg.pri))} — ${R(p.vp!=null?p.vp:vp)}${d<h?' ⚠️ em atraso':''}`);}
+  const msg=ls.length?`Oi! Passando pra lembrar do pagamento da formatura de *${f.n}*:\n\n${ls.join('\n')}\n\nQualquer dúvida é só chamar 😊`:`*${f.n}* está em dia — nenhuma parcela pendente 🎉`;
+  navigator.clipboard.writeText(msg).then(()=>toast('Copiado!'));
+}
+window.openConv=function(id){cvFam=id;document.getElementById('cNome').value='';document.getElementById('cTipo').value='adulto';document.getElementById('mConvTitle').textContent='Adicionar convidado — '+FF(id).n;document.getElementById('mConv').classList.add('open');}
+
+// ── AÇÕES FORNECEDORES ─────────────────────────────────────────────────────
+window.setFVOvr=async(id,v)=>{const f=FN(id);const base=vForn({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-base)<0.01?null:n;await saveForns();reopF(id);}
+window.setFBase=async(id,v)=>{const f=FN(id);f.v=parseFloat(v)||0;f.vOvr=null;await saveForns();reopF(id);}
+window.setFEmoji=async(id,v)=>{const f=FN(id);f.e=v;await saveForns();reopF(id);}
+window.setEVal=async(id,v)=>{const f=FN(id);f.eVal=v===''?null:parseFloat(v);await saveForns();reopF(id);}
+window.setEDt=async(id,v)=>{const f=FN(id);f.eDt=v;await saveForns();reopF(id);}
+window.setEPg=async(id,ch)=>{const f=FN(id);f.ePg=ch;if(ch&&!f.eDt)f.eDt=now();await saveForns();reopF(id);}
+window.setSDt=async(id,v)=>{const f=FN(id);f.sDt=v;await saveForns();reopF(id);}
+window.setSPg=async(id,ch)=>{const f=FN(id);f.sPg=ch;if(ch&&!f.sDt)f.sDt=now();await saveForns();reopF(id);}
+window.setFObs=async(id,v)=>{const f=FN(id);f.obs=v;await saveForns();}
+window.rmForn=async(id)=>{if(!confirm('Remover este fornecedor?'))return;forns=forns.filter(f=>f.id!==id);openForns.delete(id);await saveForns();toast('Removido');}
+
+// ── EVENTOS ────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');document.getElementById('tab-'+b.dataset.tab).classList.add('active');
+}));
+document.getElementById('btnCfg').addEventListener('click',()=>document.getElementById('cfgPanel').classList.toggle('open'));
+document.getElementById('btnSaveCfg').addEventListener('click',async()=>{
+  cfg.vForm=parseFloat(document.getElementById('cfgForm').value)||451;cfg.vAdul=parseFloat(document.getElementById('cfgAdul').value)||125;
+  cfg.c6=parseFloat(document.getElementById('cfgC6').value)||0;cfg.c9=parseFloat(document.getElementById('cfgC9').value)||62.5;
+  cfg.c10=parseFloat(document.getElementById('cfgC10').value)||125;cfg.parc=parseInt(document.getElementById('cfgParc').value)||5;
+  cfg.pri=document.getElementById('cfgData').value;cfg.nF=parseInt(document.getElementById('cfgNF').value)||35;
+  await saveCfg();renderCfg();renderFams();renderForns();toast('Configurações salvas!');
+});
+document.getElementById('srch').addEventListener('input',e=>{busca=e.target.value;renderFams();});
+document.querySelectorAll('#chips .chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#chips .chip').forEach(x=>x.classList.remove('active'));
+  c.classList.add('active');filtro=c.dataset.f;renderFams();
+}));
+document.getElementById('btnOrd').addEventListener('click',e=>{az=!az;e.target.textContent=az?'↕ A–Z':'↕ Z–A';renderFams();});
+document.getElementById('btnAtras').addEventListener('click',()=>{
+  const ls=fams.filter(f=>stFam(f).s==='atrasado');if(!ls.length)return toast('Nenhuma família em atraso 🎉');
+  navigator.clipboard.writeText(`Famílias em atraso (${ls.length}):\n\n${ls.map(f=>{const s=stFam(f);return`• ${f.n} — deve ${R(s.sd)}`;}).join('\n')}`).then(()=>toast('Copiado!'));
+});
+document.getElementById('btnAddFam').addEventListener('click',()=>{document.getElementById('nNome').value='';document.getElementById('mFam').classList.add('open');});
+document.getElementById('btnNaoFam').addEventListener('click',()=>document.getElementById('mFam').classList.remove('open'));
+document.getElementById('btnOkFam').addEventListener('click',async()=>{
+  const n=document.getElementById('nNome').value.trim();if(!n)return toast('Digite o nome');
+  const fo=parseInt(document.getElementById('nForms').value)||1,p=parseInt(document.getElementById('nParc').value)||5;
+  fams.push({id:uid(),n,fo,cv:[],parc:p,vOvr:null,pags:Array.from({length:p},()=>({pg:false,vp:null,dt:null,comp:''})),obs:''});
+  await saveFams();document.getElementById('mFam').classList.remove('open');toast('Família adicionada!');
+});
+document.getElementById('btnNaoConv').addEventListener('click',()=>document.getElementById('mConv').classList.remove('open'));
+document.getElementById('btnOkConv').addEventListener('click',async()=>{
+  const n=document.getElementById('cNome').value.trim();if(!n)return toast('Digite o nome');
+  const t=document.getElementById('cTipo').value,f=FF(cvFam);if(!f)return;
+  f.cv.push({n,t});await saveFams();document.getElementById('mConv').classList.remove('open');reop(cvFam);toast('Adicionado!');
+});
+document.getElementById('btnAddForn').addEventListener('click',()=>{document.getElementById('fnNome').value='';document.getElementById('fnVal').value='';document.getElementById('mForn').classList.add('open');});
+document.getElementById('btnNaoForn').addEventListener('click',()=>document.getElementById('mForn').classList.remove('open'));
+document.getElementById('btnOkForn').addEventListener('click',async()=>{
+  const n=document.getElementById('fnNome').value.trim();if(!n)return toast('Digite o nome');
+  const t=document.getElementById('fnTipo').value,v=parseFloat(document.getElementById('fnVal').value)||0;
+  forns.push({id:uid(),n,e:'📦',t,v,vOvr:null,eVal:null,eDt:null,ePg:false,sDt:null,sPg:false,obs:''});
+  await saveForns();document.getElementById('mForn').classList.remove('open');toast('Fornecedor adicionado!');
+});
+document.getElementById('btnCopForn').addEventListener('click',()=>{
+  const ls=forns.map(f=>{const v=vForn(f);const st=f.ePg&&f.sPg?'✓ Quitado':f.ePg?'Entrada paga':f.sPg?'Saldo pago':'Pendente';return`${f.e} ${f.n}: ${R(v)} — ${st}`;}).join('\n');
+  navigator.clipboard.writeText(`Fornecedores — Formatura Infantil 5:\n\n${ls}`).then(()=>toast('Copiado!'));
+});
+['mFam','mConv','mForn'].forEach(id=>document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)e.target.classList.remove('open');}));
+
+load();
+</script>
+</body>
+</html>
