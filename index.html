@@ -157,7 +157,8 @@ body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-we
     <span class="meta-pill" id="pillVenc">💳 Parcelas todo dia 10</span>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" data-tab="alunos">🎓 Famílias (35)</button>
+    <button class="tab-btn active" data-tab="resumo">👥 Convidados</button>
+    <button class="tab-btn" data-tab="alunos">🎓 Famílias</button>
     <button class="tab-btn" data-tab="forn">🏪 Fornecedores</button>
   </div>
 </div>
@@ -183,7 +184,57 @@ body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-we
   </div>
 </div>
 
-<div class="tab-content active" id="tab-alunos">
+<div class="tab-content active" id="tab-resumo">
+<div class="wrap">
+  <div style="margin-top:14px;background:var(--card);border-radius:var(--r);padding:14px 16px;box-shadow:0 4px 14px rgba(27,42,107,.09);border:1px solid var(--line);margin-bottom:10px;">
+    <div style="font-family:'Fredoka',sans-serif;color:var(--navy);font-size:15px;margin-bottom:2px">Total de pessoas no evento</div>
+    <div style="font-family:'Fredoka',sans-serif;font-size:36px;color:var(--navy-d)" id="rTotal">—</div>
+    <div style="font-size:12px;color:var(--muted)" id="rTotalSub">formandos + adultos + crianças</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;" id="resumoGrid">
+    <div class="stat" style="border-left:4px solid var(--gold)">
+      <div class="lbl">🎓 Formandos</div><div class="val gld" id="rFormandos">—</div>
+    </div>
+    <div class="stat" style="border-left:4px solid var(--blue)">
+      <div class="lbl">👨‍👩 Adultos pagantes</div><div class="val" style="color:var(--blue)" id="rAdultosPag">—</div>
+    </div>
+    <div class="stat" style="border-left:4px solid var(--green)">
+      <div class="lbl">🤝 Adultos gratuitos</div><div class="val" style="color:var(--green)" id="rAdultosGrat">—</div>
+    </div>
+    <div class="stat" style="border-left:4px solid var(--amber)">
+      <div class="lbl">👦 Irmãos inteiro (10+)</div><div class="val" style="color:var(--amber)" id="rIrmaoInt">—</div>
+    </div>
+    <div class="stat" style="border-left:4px solid #3185B0">
+      <div class="lbl">👧 Irmãos meia (7–9)</div><div class="val" style="color:#3185B0" id="rIrmaoMeia">—</div>
+    </div>
+    <div class="stat" style="border-left:4px solid var(--muted)">
+      <div class="lbl">🧒 Crianças gratuitas (até 6)</div><div class="val" style="color:var(--muted)" id="rIrmaoGratis">—</div>
+    </div>
+  </div>
+  <div style="margin-top:10px;background:var(--card);border-radius:var(--r);padding:13px 15px;box-shadow:0 4px 12px rgba(27,42,107,.07);border:1px solid var(--line);">
+    <div style="font-family:'Fredoka',sans-serif;color:var(--navy);font-size:14px;margin-bottom:10px">Pessoas que pagam ingresso</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:13px">
+      <div style="background:var(--blue-s);border-radius:9px;padding:10px 12px">
+        <div style="color:var(--blue);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px">Inteiro (R$125)</div>
+        <div style="font-family:'Fredoka',sans-serif;font-size:22px;color:var(--navy)" id="rPagInteiro">—</div>
+        <div style="font-size:11px;color:var(--muted)">adultos + irmãos 10+</div>
+      </div>
+      <div style="background:#EFF6FB;border-radius:9px;padding:10px 12px">
+        <div style="color:#3185B0;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px">Meia (R$62,50)</div>
+        <div style="font-family:'Fredoka',sans-serif;font-size:22px;color:var(--navy)" id="rPagMeia">—</div>
+        <div style="font-size:11px;color:var(--muted)">irmãos 7–9 anos</div>
+      </div>
+      <div style="background:var(--green-s);border-radius:9px;padding:10px 12px">
+        <div style="color:var(--green);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px">Gratuito</div>
+        <div style="font-family:'Fredoka',sans-serif;font-size:22px;color:var(--navy)" id="rPagGratis">—</div>
+        <div style="font-size:11px;color:var(--muted)">isentos + crianças até 6</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="tab-content" id="tab-alunos">
 <div class="wrap">
   <div class="dash" style="margin-top:12px">
     <div class="stat"><div class="lbl">Total esperado</div><div class="val" id="dEsp">—</div></div>
@@ -412,7 +463,7 @@ function startPolling(){
         if(data.cfg) cfg={...cfg,...data.cfg};
         if(data.fams) fams=ensureArray(data.fams);
         if(data.forns) forns=ensureArray(data.forns);
-        renderCfg(); renderFams(); renderForns();
+        renderCfg(); renderResumo(); renderFams(); renderForns();
         setSyncStatus('ok','Atualizado ✓');
         setTimeout(()=>setSyncStatus('ok','Conectado'),2500);
       }
@@ -450,12 +501,12 @@ async function load(){
         eVal:null,eDt:null,ePg:false,sDt:null,sPg:false,obs:''}));
       await ghSave({cfg,fams,forns});
     } else {
-      if(data.cfg)  cfg   = {...cfg,...data.cfg};
+      if(data.cfg) cfg={...cfg,...data.cfg};
       fams  = ensureArray(data.fams);
       forns = ensureArray(data.forns);
     }
     setSyncStatus('ok','Conectado');
-    renderCfg(); renderFams(); renderForns();
+    renderCfg(); renderResumo(); renderFams(); renderForns();
     startPolling();
   }catch(e){
     setSyncStatus('err','Sem conexão');
@@ -473,6 +524,37 @@ function stFam(f){
   return{tot,pg,sd:tot-pg,s,ov};
 }
 function vForn(f){if(f.vOvr!=null)return f.vOvr;return f.t==='por_aluno'?f.v*(cfg.nF||35):f.v;}
+
+// ── RENDER RESUMO ──────────────────────────────────────────────────────────
+function renderResumo(){
+  let formandos=0,adultosPag=0,adultosGrat=0,irmaoInt=0,irmaoMeia=0,irmaoGratis=0,outros=0;
+  fams.forEach(f=>{
+    formandos+=(f.fo||1);
+    (f.cv||[]).forEach(c=>{
+      if(c.t==='adulto')adultosPag++;
+      else if(c.t==='gratuito')adultosGrat++;
+      else if(c.t==='irmao_inteiro')irmaoInt++;
+      else if(c.t==='irmao_meia')irmaoMeia++;
+      else if(c.t==='irmao_gratis')irmaoGratis++;
+      else if(c.t==='outro')outros++;
+    });
+  });
+  const total=formandos+adultosPag+adultosGrat+irmaoInt+irmaoMeia+irmaoGratis+outros;
+  const pagInteiro=adultosPag+irmaoInt;
+  const pagGratis=adultosGrat+irmaoGratis+outros;
+
+  document.getElementById('rTotal').textContent=total;
+  document.getElementById('rTotalSub').textContent=`${formandos} formandos · ${adultosPag+adultosGrat+irmaoInt+irmaoMeia+irmaoGratis+outros} acompanhantes`;
+  document.getElementById('rFormandos').textContent=formandos;
+  document.getElementById('rAdultosPag').textContent=adultosPag;
+  document.getElementById('rAdultosGrat').textContent=adultosGrat;
+  document.getElementById('rIrmaoInt').textContent=irmaoInt;
+  document.getElementById('rIrmaoMeia').textContent=irmaoMeia;
+  document.getElementById('rIrmaoGratis').textContent=irmaoGratis;
+  document.getElementById('rPagInteiro').textContent=pagInteiro;
+  document.getElementById('rPagMeia').textContent=irmaoMeia;
+  document.getElementById('rPagGratis').textContent=pagGratis;
+}
 
 // ── RENDER CONFIG ──────────────────────────────────────────────────────────
 function renderCfg(){
