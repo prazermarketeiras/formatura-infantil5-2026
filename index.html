@@ -261,6 +261,7 @@ body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-we
     <button class="btn btn-out btn-sm" id="btnAtras">📋 Lista atrasados</button>
     <button class="btn btn-out btn-sm" id="btnOrd">↕ A–Z</button>
   </div>
+  <div id="legendaGrupos"></div>
   <div class="list" id="famList"><div style="text-align:center;padding:30px;color:var(--muted)">Carregando...</div></div>
 </div>
 </div>
@@ -408,6 +409,22 @@ const SFORN = [
   {n:'Fotógrafo',e:'📷',t:'por_aluno',v:120},{n:'Lembrança',e:'🎁',t:'por_aluno',v:60},
   {n:'Extra (por formando)',e:'✨',t:'por_aluno',v:50},{n:'Blusa',e:'👕',t:'por_aluno',v:60},
 ];
+
+// ── COMISSÃO ──────────────────────────────────────────────────────────────
+const COMISSAO=[
+  {nome:'Caroline',  cor:'#7B3FC4',bg:'#F2E8FD'},
+  {nome:'Cristiane', cor:'#3169C9',bg:'#E9F0FC'},
+  {nome:'Marina',    cor:'#2F9E63',bg:'#E5F5EC'},
+  {nome:'Milena',    cor:'#D98A1F',bg:'#FBF0DC'},
+];
+function getGrupo(fId){
+  const sorted=[...fams].sort((a,b)=>a.n.localeCompare(b.n,'pt-BR'));
+  const idx=sorted.findIndex(x=>x.id===fId);
+  if(idx<0)return 0;
+  const n=sorted.length,base=Math.floor(n/4),extra=n%4;
+  let s=0;for(let g=0;g<4;g++){const sz=base+(g<extra?1:0);if(idx<s+sz)return g;s+=sz;}
+  return 3;
+}
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
 const R   = (v) => (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -566,6 +583,20 @@ function renderCfg(){
 }
 
 // ── RENDER FAMÍLIAS ────────────────────────────────────────────────────────
+function renderLegenda(){
+  const el=document.getElementById('legendaGrupos');if(!el)return;
+  const sorted=[...fams].sort((a,b)=>a.n.localeCompare(b.n,'pt-BR'));
+  const n=sorted.length,base=Math.floor(n/4),extra=n%4;
+  let s=0,html='<div style="background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:10px"><div style="font-family:\'Fredoka\',sans-serif;color:var(--navy);font-size:14px;margin-bottom:8px">Responsáveis por família</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
+  for(let g=0;g<4;g++){
+    const sz=base+(g<extra?1:0);const grp=sorted.slice(s,s+sz);const c=COMISSAO[g];
+    const prim=grp[0]?.n.split(' ')[0]||'';const ult=grp[grp.length-1]?.n.split(' ')[0]||'';
+    html+=`<div style="background:${c.bg};border-radius:9px;padding:9px 11px;border-left:3px solid ${c.cor}"><div style="color:${c.cor};font-weight:700;font-size:12.5px">● ${c.nome}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${prim} → ${ult}</div><div style="font-size:11px;font-weight:700;color:var(--navy);margin-top:1px">${sz} famílias</div></div>`;
+    s+=sz;
+  }
+  html+='</div></div>';
+  el.innerHTML=html;
+}
 const BM={pago:{c:'b-pago',l:'✓ Quite'},parcial:{c:'b-parc',l:'Em dia'},atrasado:{c:'b-atr',l:'⚠ Atrasado'},pendente:{c:'b-pend',l:'Pendente'}};
 const TL={adulto:'Adulto',gratuito:'Gratuito',irmao_inteiro:'Irmão 10+',irmao_meia:'Irmão 7-9 (meia)',irmao_gratis:'Até 6 (grátis)',outro:'Outro',formando:'Formando(a)'};
 const TC={adulto:'t-adul',gratuito:'t-free',irmao_inteiro:'t-int',irmao_meia:'t-meia',irmao_gratis:'t-grat',outro:'t-grat',formando:'t-form'};
@@ -573,6 +604,7 @@ const AC=['#1B2A6B','#2F9E63','#3169C9','#7B3FC4','#D98A1F','#C53030'];
 function ac(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))%AC.length;return AC[h];}
 
 function renderFams(){
+  renderLegenda();
   let tot=0,rec=0,atr=0,qt=0;
   fams.forEach(f=>{const s=stFam(f);tot+=s.tot;rec+=s.pg;if(s.ov&&s.s!=='pago')atr+=s.sd;if(s.s==='pago')qt++;});
   document.getElementById('dEsp').textContent=R(tot);document.getElementById('dRec').textContent=R(rec);
@@ -598,7 +630,8 @@ function fCard(f){
   const ini=f.n.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
   const nA=(f.cv||[]).filter(c=>c.t==='adulto').length,nG=(f.cv||[]).filter(c=>c.t==='gratuito').length,nI=(f.cv||[]).filter(c=>c.t.startsWith('irmao')).length;
   const cStr=`${nA} adulto${nA!==1?'s':''}${nG?` · ${nG} gratuito${nG!==1?'s':''}`:''} ${nI?`· ${nI} irmão${nI!==1?'s':''}`:''} · ${f.parc}x${f.fo>1?` · ${f.fo} formandos`:''}`;
-  return`<div class="fcard"><div class="fhead" id="fh_${f.id}"><div class="avatar" style="background:${ac(f.n)}">${ini}</div><div class="fmain"><div class="fname">${f.n}</div><div class="fcomp">${cStr}</div></div><span class="badge ${b.c}">${b.l}</span><div class="fnum"><div class="ftot">${R(s.tot)}</div><div class="fpaid">pago ${R(s.pg)}</div><div class="mbar"><div class="mbar-f" style="width:${pct}%"></div></div></div></div><div class="fbody" id="fb_${f.id}">${fBody(f)}</div></div>`;
+  const grp=getGrupo(f.id);const cm=COMISSAO[grp];
+  return`<div class="fcard"><div class="fhead" id="fh_${f.id}"><div class="avatar" style="background:${cm.cor}">${ini}</div><div class="fmain"><div class="fname">${f.n}</div><div class="fcomp">${cStr}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="badge ${b.c}">${b.l}</span><span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;color:${cm.cor};background:${cm.bg}">${cm.nome}</span></div><div class="fnum"><div class="ftot">${R(s.tot)}</div><div class="fpaid">pago ${R(s.pg)}</div><div class="mbar"><div class="mbar-f" style="width:${pct}%"></div></div></div></div><div class="fbody" id="fb_${f.id}">${fBody(f)}</div></div>`;
 }
 
 function fBody(f){
