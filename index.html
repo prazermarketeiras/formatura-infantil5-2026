@@ -137,6 +137,10 @@ input.conv-nome:focus{outline:1.5px solid var(--gold);background:#FFFDF5;}
 .sdot.err{background:var(--red);}
 .sdot.loading{background:var(--gold);animation:blink 1s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.save-fab{position:fixed;right:16px;bottom:16px;z-index:150;padding:14px 22px;border-radius:999px;border:none;font-family:'Fredoka',sans-serif;font-weight:700;font-size:14.5px;background:#ccc;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.18);cursor:not-allowed;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .25s,transform .25s,background .25s;}
+.save-fab.dirty{background:var(--gold);color:var(--navy-d);opacity:1;transform:translateY(0);cursor:pointer;pointer-events:auto;animation:pulseSave 1.6s infinite;}
+.save-fab.saving{animation:none;opacity:.75;cursor:wait;pointer-events:none;background:var(--muted);color:#fff;}
+@keyframes pulseSave{0%,100%{box-shadow:0 6px 18px rgba(244,183,49,.35)}50%{box-shadow:0 6px 26px rgba(244,183,49,.75)}}
 </style>
 </head>
 <body>
@@ -345,6 +349,7 @@ input.conv-nome:focus{outline:1.5px solid var(--gold);background:#FFFDF5;}
 </div>
 
 <div class="toast" id="toast"></div>
+<button class="save-fab" id="btnGlobalSave">💾 Salvar alterações</button>
 
 <script>
 // ── CONFIGURAÇÃO GITHUB ────────────────────────────────────────────────────
@@ -357,6 +362,7 @@ const GH_HEADS  = { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application
 let currentSha  = null;
 let pollTimer   = null;
 let isSaving    = false;
+let dirty       = false;
 
 // ── ESTADO ─────────────────────────────────────────────────────────────────
 let cfg  = {vForm:451,vAdul:125,c6:0,c9:62.5,c10:125,parc:5,pri:'2026-07-10',nF:35};
@@ -444,6 +450,11 @@ function setSyncStatus(state,label){
   else if(state==='err'){dot.classList.add('err');lbl.textContent=label||'Erro';}
   else{dot.classList.add('loading');lbl.textContent=label||'Salvando…';}
 }
+function markDirty(){dirty=true;updateSaveBtn();}
+function updateSaveBtn(){
+  const b=document.getElementById('btnGlobalSave');if(!b)return;
+  if(dirty)b.classList.add('dirty');else b.classList.remove('dirty');
+}
 
 // ── GITHUB API ─────────────────────────────────────────────────────────────
 async function ghFetch(){
@@ -471,7 +482,7 @@ async function ghSave(data){
 function startPolling(){
   clearInterval(pollTimer);
   pollTimer = setInterval(async()=>{
-    if(isSaving) return;
+    if(isSaving||dirty) return;
     try{
       const r = await fetch(GH_API,{headers:GH_HEADS});
       if(!r.ok) return;
@@ -496,6 +507,7 @@ async function saveAll(){
   setSyncStatus('loading','Salvando…');
   try{
     await ghSave({cfg,fams,forns});
+    dirty=false;updateSaveBtn();
     setSyncStatus('ok','Salvo ✓');
     setTimeout(()=>setSyncStatus('ok','Conectado'),1800);
   }catch(e){
@@ -731,18 +743,18 @@ function reop(id){openFams.add(id);const b=document.getElementById('fb_'+id);if(
 function reopF(id){openForns.add(id);const b=document.getElementById('fob_'+id);if(b)b.classList.add('open');}
 
 // ── AÇÕES FAMÍLIAS ─────────────────────────────────────────────────────────
-window.setNome=async(id,v)=>{const f=FF(id);if(!v.trim())return;f.n=v.trim();await saveFams();renderFams();reop(id);}
-window.setCvNome=async(id,i,v)=>{const f=FF(id);if(!v.trim()||!f.cv[i])return;f.cv[i].n=v.trim();await saveFams();reop(id);}
-window.setFo=async(id,v)=>{const f=FF(id);f.fo=Math.max(1,parseInt(v)||1);await saveFams();reop(id);}
-window.setParc=async(id,v)=>{const f=FF(id);const n=parseInt(v);f.parc=n;f.pags=Array.from({length:n},(_,i)=>f.pags[i]||{pg:false,vp:null,dt:null,comp:''});renderFams();reop(id);saveFams();}
-window.setVOvr=async(id,v)=>{const f=FF(id);const cal=vFam({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-cal)<0.01?null:n;renderFams();reop(id);saveFams();}
-window.tgPago=(id,i,ch)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].pg=ch;if(ch&&!f.pags[i].dt)f.pags[i].dt=now();renderFams();reop(id);saveFams();}
-window.setDt=(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].dt=v;renderFams();reop(id);saveFams();}
-window.setVp=(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].vp=v===''?null:parseFloat(v);renderFams();reop(id);saveFams();}
-window.setComp=(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].comp=v;renderFams();saveFams();}
-window.setObs=async(id,v)=>{const f=FF(id);f.obs=v;await saveFams();}
-window.rmCv=async(id,i)=>{const f=FF(id);f.cv.splice(i,1);await saveFams();reop(id);}
-window.rmFam=async(id)=>{if(!confirm('Remover esta família?'))return;fams=fams.filter(f=>f.id!==id);openFams.delete(id);await saveFams();toast('Família removida');}
+window.setNome=(id,v)=>{const f=FF(id);if(!v.trim())return;f.n=v.trim();markDirty();renderFams();reop(id);}
+window.setCvNome=(id,i,v)=>{const f=FF(id);if(!v.trim()||!f.cv[i])return;f.cv[i].n=v.trim();markDirty();reop(id);}
+window.setFo=(id,v)=>{const f=FF(id);f.fo=Math.max(1,parseInt(v)||1);markDirty();reop(id);}
+window.setParc=(id,v)=>{const f=FF(id);const n=parseInt(v);f.parc=n;f.pags=Array.from({length:n},(_,i)=>f.pags[i]||{pg:false,vp:null,dt:null,comp:''});markDirty();renderFams();reop(id);}
+window.setVOvr=(id,v)=>{const f=FF(id);const cal=vFam({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-cal)<0.01?null:n;markDirty();renderFams();reop(id);}
+window.tgPago=(id,i,ch)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].pg=ch;if(ch&&!f.pags[i].dt)f.pags[i].dt=now();markDirty();renderFams();reop(id);}
+window.setDt=(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].dt=v;markDirty();renderFams();reop(id);}
+window.setVp=(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].vp=v===''?null:parseFloat(v);markDirty();renderFams();reop(id);}
+window.setComp=(id,i,v)=>{const f=FF(id);f.pags[i]=f.pags[i]||{};f.pags[i].comp=v;markDirty();renderFams();}
+window.setObs=(id,v)=>{const f=FF(id);f.obs=v;markDirty();}
+window.rmCv=(id,i)=>{const f=FF(id);f.cv.splice(i,1);markDirty();reop(id);}
+window.rmFam=(id)=>{if(!confirm('Remover esta família?'))return;fams=fams.filter(f=>f.id!==id);openFams.delete(id);markDirty();renderFams();toast('Família removida — clique em Salvar alterações');}
 window.copConf=async(id)=>{
   const f=FF(id);const tot=vFam(f);const vp=tot/f.parc;
   const linhas=[];
@@ -770,16 +782,16 @@ window.copCob=async(id)=>{
 window.openConv=function(id){cvFam=id;document.getElementById('cNome').value='';document.getElementById('cTipo').value='adulto';document.getElementById('mConvTitle').textContent='Adicionar convidado — '+FF(id).n;document.getElementById('mConv').classList.add('open');}
 
 // ── AÇÕES FORNECEDORES ─────────────────────────────────────────────────────
-window.setFVOvr=async(id,v)=>{const f=FN(id);const base=vForn({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-base)<0.01?null:n;await saveForns();reopF(id);}
-window.setFBase=async(id,v)=>{const f=FN(id);f.v=parseFloat(v)||0;f.vOvr=null;await saveForns();reopF(id);}
-window.setFEmoji=async(id,v)=>{const f=FN(id);f.e=v;await saveForns();reopF(id);}
-window.setEVal=async(id,v)=>{const f=FN(id);f.eVal=v===''?null:parseFloat(v);await saveForns();reopF(id);}
-window.setEDt=async(id,v)=>{const f=FN(id);f.eDt=v;await saveForns();reopF(id);}
-window.setEPg=async(id,ch)=>{const f=FN(id);f.ePg=ch;if(ch&&!f.eDt)f.eDt=now();await saveForns();reopF(id);}
-window.setSDt=async(id,v)=>{const f=FN(id);f.sDt=v;await saveForns();reopF(id);}
-window.setSPg=async(id,ch)=>{const f=FN(id);f.sPg=ch;if(ch&&!f.sDt)f.sDt=now();await saveForns();reopF(id);}
-window.setFObs=async(id,v)=>{const f=FN(id);f.obs=v;await saveForns();}
-window.rmForn=async(id)=>{if(!confirm('Remover este fornecedor?'))return;forns=forns.filter(f=>f.id!==id);openForns.delete(id);await saveForns();toast('Removido');}
+window.setFVOvr=(id,v)=>{const f=FN(id);const base=vForn({...f,vOvr:null});const n=parseFloat(v);f.vOvr=Math.abs(n-base)<0.01?null:n;markDirty();renderForns();reopF(id);}
+window.setFBase=(id,v)=>{const f=FN(id);f.v=parseFloat(v)||0;f.vOvr=null;markDirty();renderForns();reopF(id);}
+window.setFEmoji=(id,v)=>{const f=FN(id);f.e=v;markDirty();renderForns();reopF(id);}
+window.setEVal=(id,v)=>{const f=FN(id);f.eVal=v===''?null:parseFloat(v);markDirty();renderForns();reopF(id);}
+window.setEDt=(id,v)=>{const f=FN(id);f.eDt=v;markDirty();renderForns();reopF(id);}
+window.setEPg=(id,ch)=>{const f=FN(id);f.ePg=ch;if(ch&&!f.eDt)f.eDt=now();markDirty();renderForns();reopF(id);}
+window.setSDt=(id,v)=>{const f=FN(id);f.sDt=v;markDirty();renderForns();reopF(id);}
+window.setSPg=(id,ch)=>{const f=FN(id);f.sPg=ch;if(ch&&!f.sDt)f.sDt=now();markDirty();renderForns();reopF(id);}
+window.setFObs=(id,v)=>{const f=FN(id);f.obs=v;markDirty();}
+window.rmForn=(id)=>{if(!confirm('Remover este fornecedor?'))return;forns=forns.filter(f=>f.id!==id);openForns.delete(id);markDirty();renderForns();toast('Removido — clique em Salvar alterações');}
 
 // ── EVENTOS ────────────────────────────────────────────────────────────────
 document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
@@ -832,6 +844,16 @@ document.getElementById('btnCopForn').addEventListener('click',()=>{
   navigator.clipboard.writeText(`Fornecedores — Formatura Infantil 5:\n\n${ls}`).then(()=>toast('Copiado!'));
 });
 ['mFam','mConv','mForn'].forEach(id=>document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)e.target.classList.remove('open');}));
+
+document.getElementById('btnGlobalSave').addEventListener('click',async()=>{
+  if(!dirty)return;
+  const btn=document.getElementById('btnGlobalSave');
+  btn.classList.add('saving');btn.textContent='Salvando…';
+  await saveAll();
+  btn.classList.remove('saving');btn.textContent='💾 Salvar alterações';
+  if(!dirty)toast('Tudo salvo!');
+});
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 
 load();
 </script>
